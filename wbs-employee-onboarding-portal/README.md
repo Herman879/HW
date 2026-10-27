@@ -31,7 +31,7 @@ Proxy targets are only a local dev convenience. `VITE_API_BASE_URL` can be an HT
 | `/hr` | `hr` | Employee list, statuses, search |
 | `/hr/new` | `hr` | Create onboarding request with validation and idempotency key |
 | `/hr/employees/:id` | `hr` | Detail, team lead, accounts, explicit approval, invitation action |
-| `/activate?token=...` | public | Backend invitation validation and account activation |
+| `/activate#token=...` | public | Backend invitation validation and account activation |
 | `/login` | public | Backend authentication with HttpOnly session |
 | `/dashboard` | `employee` | Welcome header and four module cards |
 | `/dashboard/rules` | `employee` | Real placeholder page |
@@ -60,7 +60,7 @@ For production, serve `dist/` behind an HTTPS host with a **single-page applicat
 - `src/pages/`: HR, new employee, detail/approval, activation, login, employee modules.
 - `src/lib/`: pure employee/activation validation and status transition logic.
 - `src/i18n/de.ts`: centralized common German strings; expand to `en.ts` with locale provider later.
-- `docs/BACKEND_CONTRACT.md`: **handoff for Codex** with all JSON shapes, statuses, error codes, security duties and E2E checks.
+- `docs/BACKEND_CONTRACT.md`: historical proposal only. Backend source of truth: `klarekipro/wbs-employee-onboarding` `feat/backend:docs/api-contract.md` and `docs/integration.md`.
 
 ## Boundaries / security
 
@@ -68,7 +68,7 @@ For production, serve `dist/` behind an HTTPS host with a **single-page applicat
 - Password only held temporarily in React component state for form submission over HTTPS; immediately cleared after verified activation.
 - URL invitation token read once, removed from visible URL, sent to backend validation and activation only. Configure referrer/log protection server-side.
 - Protected routes are UX, **server must enforce RBAC**. HR approval checked in UI but enforced by backend.
-- Signup uses one `Idempotency-Key` per form session, held in memory. Codex backend must implement atomic deduplication.
+- Signup uses one `Idempotency-Key` per form session, held in memory. The backend owns atomic deduplication. Authenticated POSTs send in-memory `X-CSRF-Token` from login or `/auth/me`. All responses unwrap `{data:...}`; HR list uses backend pagination. Employee state and n8n job processing state are separate.
 - Network errors never masquerade as success. Dashboard metrics only derive from real returned records.
 
 ## Integration status

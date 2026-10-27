@@ -32,13 +32,13 @@ export function validateEmployee(values: FormValues): FormErrors {
 }
 
 export function validUsername(input: string): boolean {
-  return /^[a-zA-Z0-9._-]{3,30}$/.test(input);
+  return /^[a-z0-9][a-z0-9._-]{2,63}$/.test(input);
 }
 
 export function validateActivation(username: string, password: string, confirmation: string): Record<string, string> {
   const errors: Record<string, string> = {};
-  if (!validUsername(username)) errors.username = '3–30 Zeichen: Buchstaben, Zahlen, Punkt, _ oder -.';
-  if (password.length < 12) errors.password = 'Mindestens 12 Zeichen erforderlich.';
+  if (!validUsername(username)) errors.username = '3–64 Kleinbuchstaben, Zahlen, Punkt, _ oder -. Beginn mit Buchstabe oder Zahl.';
+  if (password.length < 12 || password.length > 128) errors.password = '12 bis 128 Zeichen erforderlich.';
   if (!confirmation) errors.confirmation = 'Bitte Passwort bestätigen.';
   else if (password !== confirmation) errors.confirmation = 'Die Passwörter stimmen nicht überein.';
   return errors;

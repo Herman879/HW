@@ -15,7 +15,7 @@ function Protected({ role }: { role: 'hr' | 'employee' }) {
   if (status === 'checking') return <div className="global-state"><CenterState busy title="Sitzung wird geprüft" detail="Einen Moment bitte …" /></div>;
   if (status === 'unavailable') return <SessionError retry={() => void refresh().catch(() => undefined)} />;
   if (!user) return <Navigate to="/login" replace state={{ from: location.pathname }} />;
-  if (!user.roles.includes(role)) return <div className="global-state"><CenterState title="Keine Berechtigung" detail="Dieses Konto hat keinen Zugriff auf diesen Bereich." /></div>;
+  if (user.role !== role) return <div className="global-state"><CenterState title="Keine Berechtigung" detail="Dieses Konto hat keinen Zugriff auf diesen Bereich." /></div>;
   return <Outlet />;
 }
 function Home() {
@@ -23,7 +23,7 @@ function Home() {
   if (status === 'checking') return <div className="global-state"><CenterState busy title="Sitzung wird geprüft" /></div>;
   if (status === 'unavailable') return <SessionError retry={() => window.location.reload()} />;
   if (!user) return <Navigate replace to="/login" />;
-  return <Navigate replace to={user.roles.includes('hr') ? '/hr' : '/dashboard'} />;
+  return <Navigate replace to={user.role === 'hr' ? '/hr' : '/dashboard'} />;
 }
 export function App() {
   return <BrowserRouter><AuthProvider><Routes>

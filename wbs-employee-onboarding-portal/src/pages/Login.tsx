@@ -16,7 +16,7 @@ export function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
-  if (status === 'authenticated' && user) return <Navigate replace to={user.roles.includes('hr') ? '/hr' : '/dashboard'}/>;
+  if (status === 'authenticated' && user) return <Navigate replace to={user.role === 'hr' ? '/hr' : '/dashboard'}/>;
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (busy || !username.trim() || !password) return;
@@ -24,8 +24,8 @@ export function LoginPage() {
     try {
       const verified = await signIn(username.trim(), password);
       const requested = (location.state as { from?: string } | null)?.from;
-      const home = verified.roles.includes('hr') ? '/hr' : '/dashboard';
-      const next = requested && requested.startsWith(verified.roles.includes('hr') ? '/hr' : '/dashboard') ? requested : home;
+      const home = verified.role === 'hr' ? '/hr' : '/dashboard';
+      const next = requested && requested.startsWith(verified.role === 'hr' ? '/hr' : '/dashboard') ? requested : home;
       navigate(next, { replace: true });
     } catch (e) { setError(apiMessage(e)); }
     finally { setBusy(false); }

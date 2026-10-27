@@ -5,7 +5,9 @@ import { useAuth } from '../auth/AuthContext';
 import { Brand, InlineAlert } from './UI';
 
 export function Layout({ area }: { area: 'hr' | 'employee' }) {
-  const { user, signOut } = useAuth();
+  const { user, employee, signOut } = useAuth();
+  const displayName = employee ? `${employee.first_name} ${employee.last_name}` : (user?.username || '');
+  const initials = employee ? `${employee.first_name[0] || ''}${employee.last_name[0] || ''}` : (user?.username?.[0] || 'W').toUpperCase();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [logoutError, setLogoutError] = useState('');
@@ -37,10 +39,10 @@ export function Layout({ area }: { area: 'hr' | 'employee' }) {
       )}</nav>
       <div className="sidebar-spacer" />
       <div className="sidebar-help"><div className="help-symbol"><ShieldCheck size={18} /></div><strong>Sicherer Onboarding-Prozess</strong><p>Alle Freigaben und Einladungen werden durch das Backend geprüft.</p></div>
-      <div className="sidebar-account"><div className="account-avatar" aria-hidden="true">{user?.first_name?.[0] || 'W'}{user?.last_name?.[0] || ''}</div><div className="account-name"><strong>{user?.first_name} {user?.last_name}</strong><span>{hr ? 'HR-Administrator' : 'Mitarbeiter'}</span></div><button type="button" onClick={() => void onLogout()} title="Abmelden" aria-label="Abmelden" className="logout-button"><LogOut size={19} /></button></div>
+      <div className="sidebar-account"><div className="account-avatar" aria-hidden="true">{initials}</div><div className="account-name"><strong>{displayName}</strong><span>{hr ? 'HR-Administrator' : 'Mitarbeiter'}</span></div><button type="button" onClick={() => void onLogout()} title="Abmelden" aria-label="Abmelden" className="logout-button"><LogOut size={19} /></button></div>
       {logoutError && <div className="side-error" role="alert">{logoutError}</div>}
     </aside>
-    <div className="content-shell"><header className="topbar"><div className="topbar-left"><button type="button" className="icon-button mobile-only" aria-label="Menü öffnen" onClick={() => setOpen(true)}><Menu size={21} /></button><span className="topbar-section">{hr ? 'HR WORKSPACE' : 'EMPLOYEE WORKSPACE'}</span><span className="topbar-separator">/</span><span className="topbar-current">{hr ? 'Onboarding' : 'Mein Start'}</span></div><div className="topbar-right"><span className="topbar-privacy"><span className="privacy-dot" /> Geschützter Bereich</span><div className="topbar-avatar">{user?.first_name?.[0] || 'W'}</div></div></header><main className="main-content"><Outlet /></main><footer className="footer"><span>© WBS Coding School · Onboarding MVP</span><span>Version 1.0 <ArrowRight size={13} /></span></footer></div>
+    <div className="content-shell"><header className="topbar"><div className="topbar-left"><button type="button" className="icon-button mobile-only" aria-label="Menü öffnen" onClick={() => setOpen(true)}><Menu size={21} /></button><span className="topbar-section">{hr ? 'HR WORKSPACE' : 'EMPLOYEE WORKSPACE'}</span><span className="topbar-separator">/</span><span className="topbar-current">{hr ? 'Onboarding' : 'Mein Start'}</span></div><div className="topbar-right"><span className="topbar-privacy"><span className="privacy-dot" /> Geschützter Bereich</span><div className="topbar-avatar">{initials[0] || 'W'}</div></div></header><main className="main-content"><Outlet /></main><footer className="footer"><span>© WBS Coding School · Onboarding MVP</span><span>Version 1.0 <ArrowRight size={13} /></span></footer></div>
   </div>;
 }
 

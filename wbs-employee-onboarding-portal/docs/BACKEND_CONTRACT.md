@@ -1,3 +1,5 @@
+> **SUPERSEDED / HISTORICAL PROPOSAL.** This document describes the original frontend proposal, not the implemented backend. The authoritative integration contract is `klarekipro/wbs-employee-onboarding` branch `feat/backend`, `docs/api-contract.md` and `docs/integration.md`. This frontend now follows the backend contract. Do not use this file to implement the backend.
+
 # Codex ↔ Frontend integration contract — MVP v1
 
 **Status:** Proposed contract; no backend endpoints were verified. JSON objects and exact field names below are authoritative for this frontend. All API responses MUST be JSON except explicit `204` no-content success responses.

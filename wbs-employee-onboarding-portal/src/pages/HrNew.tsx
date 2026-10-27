@@ -7,7 +7,7 @@ import { Field, InlineAlert, PageHeader } from '../components/UI';
 import { validateEmployee, type FormErrors } from '../lib/validation';
 
 const initial: NewEmployeeRequest = { first_name: '', last_name: '', personal_email: '', department: '', role: '', start_date: '' };
-const departments = ['Engineering', 'Marketing', 'Vertrieb', 'Personal / HR', 'Finanzen', 'Operations', 'IT', 'Kundenservice', 'Produktmanagement', 'Sonstige'];
+const departments = ['IT', 'Marketing', 'Sales'];
 export function HrNewPage() {
   const [form, setForm] = useState(initial);
   const [errors, setErrors] = useState<FormErrors>({});
@@ -30,7 +30,7 @@ export function HrNewPage() {
     submitting.current = true; setBusy(true); setError('');
     try {
       const result = await api.createOnboarding(normalized, key.current);
-      if (!result?.employee_id || !result.status) throw new Error('Unvollständige Bestätigung vom Backend.');
+      if (!result?.employee_id || !result.job_id || !result.processing_status) throw new Error('Unvollständige Bestätigung vom Backend.');
       navigate(`/hr/employees/${encodeURIComponent(result.employee_id)}`, { replace: true, state: { created: true } });
     } catch (err) {
       if (err instanceof ApiError && err.fieldErrors) setErrors(err.fieldErrors as FormErrors);
@@ -52,7 +52,7 @@ export function HrNewPage() {
       <div className="form-rule" /><div className="form-section-heading"><span className="form-section-icon"><CalendarDays size={20} /></span><div><h2>Arbeitsplatz & Einstieg</h2><p>Diese Informationen helfen bei der Vorbereitung der benötigten Konten.</p></div></div>
       <div className="form-grid">
         <Field {...fieldProps('department')} label="Abteilung"><select id="department" value={form.department} onChange={e => change('department', e.target.value)} aria-invalid={!!errors.department} aria-describedby={errors.department ? 'department-error' : undefined} required><option value="">Abteilung wählen …</option>{departments.map(d => <option key={d} value={d}>{d}</option>)}</select></Field>
-        <Field {...fieldProps('role')} label="Position"><input id="role" value={form.role} onChange={e => change('role', e.target.value)} aria-invalid={!!errors.role} aria-describedby={errors.role ? 'role-error' : undefined} placeholder="z. B. UX Designerin" maxLength={160} required /></Field>
+        <Field {...fieldProps('role')} label="Position"><input id="role" value={form.role} onChange={e => change('role', e.target.value)} aria-invalid={!!errors.role} aria-describedby={errors.role ? 'role-error' : undefined} placeholder="z. B. UX Designerin" maxLength={100} required /></Field>
         <Field {...fieldProps('start_date')} label="Eintrittsdatum"><input id="start_date" type="date" value={form.start_date} onChange={e => change('start_date', e.target.value)} aria-invalid={!!errors.start_date} aria-describedby={errors.start_date ? 'start_date-error' : undefined} required /></Field>
       </div>
       <div className="form-footer"><Link className="button button-secondary" to="/hr">Abbrechen</Link><button className="button button-primary" type="submit" disabled={busy}>{busy ? 'Wird übermittelt …' : <>Onboarding starten <ArrowRight size={17} /></>}</button></div>
